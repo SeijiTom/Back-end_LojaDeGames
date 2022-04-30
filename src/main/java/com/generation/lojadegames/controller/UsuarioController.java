@@ -1,6 +1,7 @@
 package com.generation.lojadegames.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -16,11 +17,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.generation.lojadegames.model.Usuario;
+import com.generation.lojadegames.model.UsuarioLogin;
 import com.generation.lojadegames.repository.UsuarioRepository;
-
-
+import com.generation.lojadegames.service.UsuarioService;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -28,55 +28,50 @@ import com.generation.lojadegames.repository.UsuarioRepository;
 public class UsuarioController {
 
 	@Autowired
+	private UsuarioService usuarioService;
+	
+	@Autowired
 	private UsuarioRepository usuarioRepository;
 	
-	@GetMapping
-	public ResponseEntity<List<Usuario>> getAll() {
-		
+	@GetMapping("/all")
+	public ResponseEntity<List<Usuario>> getAll () {
 		return ResponseEntity.ok(usuarioRepository.findAll());
-		
 	}
 	
-	@GetMapping("/{id}") 
-	public ResponseEntity<Usuario> getById(@PathVariable Long id) {
-		
+	@GetMapping("/{id}")
+	public ResponseEntity<Usuario> getById (@PathVariable Long id) {
 		return usuarioRepository.findById(id)
 				.map(resposta -> ResponseEntity.ok(resposta))
 				.orElse(ResponseEntity.notFound().build());
-		
 	}
-	
-	@GetMapping("/usuarios/{usuarios}")
-	public ResponseEntity<List<Usuario>> getByNomeUsuario(@PathVariable String nomeUsuario) {
-	
-		return ResponseEntity.ok(usuarioRepository.findAllByNomeUsuarioContainingIgnoreCase(nomeUsuario));
+	@PostMapping("/logar")
+	public ResponseEntity<UsuarioLogin> login(@RequestBody Optional<UsuarioLogin> usuarioLogin) {
+		return usuarioService.autenticarUsuario(usuarioLogin)
+			.map(resposta -> ResponseEntity.ok(resposta))
+			.orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
 	}
-	
-	@PostMapping
-	public ResponseEntity<Usuario> postUsuario(@Valid @RequestBody Usuario usuario) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioRepository.save(usuario));
-	}
-	
-	@PutMapping
-	public ResponseEntity<Usuario> putUsuario(@Valid @RequestBody Usuario usuario) {
-					
-		return usuarioRepository.findById(usuario.getId())
-				.map(resposta -> {
-					return ResponseEntity.ok().body(usuarioRepository.save(usuario));
-				})
-				.orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
 
+	@PostMapping("/cadastrar")
+	public ResponseEntity<Usuario> postUsuario(@Valid @RequestBody Usuario usuario) {
+		return usuarioService.cadastrarUsuario(usuario)
+			.map(resposta -> ResponseEntity.status(HttpStatus.CREATED).body(resposta))
+			.orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
+	}
+
+	@PutMapping("/atualizar")
+	public ResponseEntity<Usuario> putUsuario(@Valid @RequestBody Usuario usuario) {
+		return usuarioService.atualizarUsuario(usuario)
+			.map(resposta -> ResponseEntity.status(HttpStatus.OK).body(resposta))
+			.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
 	}
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteUsuario(@PathVariable Long id) {
-		
+	public ResponseEntity<Object> deleteTema (@PathVariable Long id){
 		return usuarioRepository.findById(id)
 				.map(resposta -> {
 					usuarioRepository.deleteById(id);
 					return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 				})
-				.orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
+				.orElse(ResponseEntity.notFound().build());
 	}
-	
 }

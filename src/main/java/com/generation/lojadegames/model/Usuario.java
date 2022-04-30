@@ -1,8 +1,10 @@
 package com.generation.lojadegames.model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +15,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -23,30 +28,30 @@ public class Usuario {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotBlank(message = "O atributo nome_usuario é obrigatório e não pode utilizar "
-			+ "espaços em branco.")
-	@Size(min = 8, max = 100, message = "O atributo nome_usuario deve conter no mínimo "
-			+ "08 a 100 caracteres.")
-	private String nomeUsuario;
+	@NotNull(message = "O nome é obrigatório!")
+	@Size(min = 5, max = 100)
+	private String nome;
 	
-	@NotBlank(message = "O atributo usuario é obrigatório e não pode utilizar "
-			+ "espaços em branco.")
-	@Size(min = 2, max = 16, message = "O atributo usuario deve conter no mínimo "
-			+ "02 a 16 caracteres.")
+	@Column(name = "data_nasc")
+	@NotNull(message = "O atributo Data de Nascimento é Obrigatório!")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private LocalDate dataNasc;
+	
+	@NotBlank(message = "O nome de usuário é obrigatório!")
+	@Size(min = 5, max = 100)
 	private String usuario;
 	
-	@NotNull(message = "O atributo senha é obrigatório!")
-	@Size(min = 6, max = 20, message = "O atributo nome_usuario deve conter no mínimo "
-			+ "06 a 20 caracteres.")
+	@NotBlank
+	@Size(min = 8)
 	private String senha;
 	
-	private String fotoUsuario;
+	private String foto;
 	
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties("usuario")
 	private List<Produto> produto;
 
-	
 	public Long getId() {
 		return id;
 	}
@@ -55,12 +60,12 @@ public class Usuario {
 		this.id = id;
 	}
 
-	public String getNomeUsuario() {
-		return nomeUsuario;
+	public String getNome() {
+		return nome;
 	}
 
-	public void setNomeUsuario(String nomeUsuario) {
-		this.nomeUsuario = nomeUsuario;
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	public String getUsuario() {
@@ -79,12 +84,20 @@ public class Usuario {
 		this.senha = senha;
 	}
 
-	public String getFotoUsuario() {
-		return fotoUsuario;
+	public String getFoto() {
+		return foto;
 	}
 
-	public void setFotoUsuario(String fotoUsuario) {
-		this.fotoUsuario = fotoUsuario;
+	public void setFoto(String foto) {
+		this.foto = foto;
+	}
+
+	public LocalDate getDataNasc() {
+		return dataNasc;
+	}
+
+	public void setDataNasc(LocalDate dataNasc) {
+		this.dataNasc = dataNasc;
 	}
 
 	public List<Produto> getProduto() {
@@ -94,5 +107,7 @@ public class Usuario {
 	public void setProduto(List<Produto> produto) {
 		this.produto = produto;
 	}
+	
+	
 	
 }

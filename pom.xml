@@ -8,11 +8,11 @@
 		<version>2.6.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.generation</groupId>
-	<artifactId>loja_de_games</artifactId>
+	<groupId>com.generation.lojadegames</groupId>
+	<artifactId>lojadegames</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>loja_de_games</name>
-	<description>Backend de um site de uma loja de games</description>
+	<name>lojadegames</name>
+	<description>Projeto loja de games</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
@@ -28,6 +28,16 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
 		</dependency>
 
 		<dependency>
